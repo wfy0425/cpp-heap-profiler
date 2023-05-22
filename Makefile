@@ -4,7 +4,7 @@ LFLAGS=
 
 
 backtrace.o: backtrace.cpp
-	$(CXX) $(CXXFLAGS) ./backtrace.cpp -o ./backtrace.o -ltcmalloc 
+	$(CXX) $(CXXFLAGS) ./backtrace.cpp -o ./backtrace -ltcmalloc 
 clean:
 	-rm -rf *.o
 	-rm -rf *.tmp
