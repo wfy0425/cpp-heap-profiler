@@ -45,6 +45,9 @@ int *timeIndexPtr = &timeIndex;
 
 int main(int argc, char *argv[])
 {
+  void *buffer[BT_BUF_SIZE];
+  // init backtrace
+  int nptrs = backtrace(buffer, BT_BUF_SIZE);
 
   MallocHook::AddNewHook(&MyNewHook);
   startTime = high_resolution_clock::now();
@@ -122,7 +125,7 @@ static void RecordAlloc(const void *ptr, size_t bytes, int skip_count)
 
   /* DEBUG: seems causing infi loop */
   nptrs = backtrace(buffer, BT_BUF_SIZE);
-  
+
   /* The call backtrace_symbols_fd(buffer, nptrs, STDOUT_FILENO)
      would produce similar output to the following: */
 
@@ -137,7 +140,7 @@ static void RecordAlloc(const void *ptr, size_t bytes, int skip_count)
   // for (int j = 0; j < nptrs; j++)
   // {
   sizeArr[*sizeIndexPtr] = bytes;
-  timeArr[*timeIndexPtr] =  high_resolution_clock::now();
+  timeArr[*timeIndexPtr] = high_resolution_clock::now();
   *sizeIndexPtr++;
 
   // struct AllocRecord record = {bytes, now};
