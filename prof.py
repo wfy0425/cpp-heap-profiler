@@ -4,11 +4,15 @@ import time
 import subprocess
 from collections import OrderedDict
 import matplotlib.pyplot as plt
+import sys
 
-file_paths = glob.glob("*.heap")
+file_prefix = sys.argv[1]
+
+file_paths = glob.glob(file_prefix+".*.heap")
 
 heap_dict = {}
 min_time = float('inf')
+
 for file_path in file_paths:
     with open(file_path, "r") as file:
         content = file.read()
@@ -18,6 +22,15 @@ for file_path in file_paths:
 
         creation_time = os.path.getctime(file_path)
         min_time = min(min_time, creation_time)
+
+for file_path in file_paths:
+    with open(file_path, "r") as file:
+        content = file.read()
+
+        # print(f"File: {file_path}")
+        # print(content)
+
+        creation_time = os.path.getctime(file_path)
 
         # formatted_creation_time = time.ctime(creation_time)
         # print("File creation time:", creation_time)
@@ -54,22 +67,32 @@ for file_path in file_paths:
 
 print("heap_dict: ", heap_dict)
 index = 0
+legend_arr = []
 for key, value in heap_dict.items():
+    od1 = OrderedDict(sorted(value.items()))
     x = []
     y = []
-    for key1, value1 in value.items():
+    for key1, value1 in od1.items():
         x.append(key1)
         y.append(value1)
 
 
     plt.xlabel('Time (sec)')
     plt.ylabel('Size (bytes)')
-    plt.plot(x, y, label=index)
-    index+=1
+    plt.plot(x, y, linestyle='--', marker='o', label=index)
+    
     print(str(index) + ": ", key)
+    legend_arr.append((str(index) + ": "+ key))
+    index+=1
+    
     # plt.savefig(key+".png")
 
 plt.legend(loc='center left', bbox_to_anchor=(1, 0.5))
-plt.savefig("mygraph.png")
+plt.savefig(file_prefix+".png")
 
+file_path1 = file_prefix+"_legend.txt"
+with open(file_path1, 'w') as file:
+    # Write each item from the list to the file
+    for item in legend_arr:
+        file.write(str(item) + '\n')
         
